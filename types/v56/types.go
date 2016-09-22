@@ -294,6 +294,7 @@ type InstantiationParams struct {
 	NetworkConfigSection         *NetworkConfigSection         `xml:"NetworkConfigSection,omitempty"`
 	NetworkConnectionSection     *NetworkConnectionSection     `xml:"NetworkConnectionSection,omitempty"`
 	ProductSection               *ProductSection               `xml:"ProductSection,omitempty"`
+	VirtualHardwareSection       *VirtualHardwareSection       `xml:"http://schemas.dmtf.org/ovf/envelope/1 VirtualHardwareSection,omitempty"`
 	// TODO: Not Implemented
 	// SnapshotSection              SnapshotSection              `xml:"SnapshotSection,omitempty"`
 }
@@ -924,34 +925,35 @@ type VM struct {
 // ovf:VirtualHardwareSection from VM struct
 type VirtualHardwareSection struct {
 	// Extends OVF Section_Type
-	XMLName xml.Name `xml:"VirtualHardwareSection"`
-	Xmlns   string   `xml:"vcloud,attr,omitempty"`
+	XMLName   xml.Name `xml:"http://schemas.dmtf.org/ovf/envelope/1 VirtualHardwareSection"`
+	Xmlns     string   `xml:"vcloud,attr,omitempty"`
+	Transport string   `xml:"ovf:transport,attr"`
 
-	Info string                 `xml:"Info"`
-	HREF string                 `xml:"href,attr,omitempty"`
-	Type string                 `xml:"type,attr,omitempty"`
+	Info string                 `xml:"http://schemas.dmtf.org/ovf/envelope/1 Info"`
+	HREF string                 `xml:"http://www.vmware.com/vcloud/v1.5 href,attr,omitempty"`
+	Type string                 `xml:"http://www.vmware.com/vcloud/v1.5 type,attr,omitempty"`
 	Item []*VirtualHardwareItem `xml:"Item,omitempty"`
 }
 
 // Each ovf:Item parsed from the ovf:VirtualHardwareSection
 type VirtualHardwareItem struct {
-	XMLName             xml.Name                       `xml:"Item"`
-	ResourceType        int                            `xml:"ResourceType,omitempty"`
-	ResourceSubType     string                         `xml:"ResourceSubType,omitempty"`
-	ElementName         string                         `xml:"ElementName,omitempty"`
-	Description         string                         `xml:"Description,omitempty"`
-	InstanceID          int                            `xml:"InstanceID,omitempty"`
-	AutomaticAllocation bool                           `xml:"AutomaticAllocation,omitempty"`
-	Address             string                         `xml:"Address,omitempty"`
-	AddressOnParent     int                            `xml:"AddressOnParent,omitempty"`
-	AllocationUnits     string                         `xml:"AllocationUnits,omitempty"`
-	Reservation         int                            `xml:"Reservation,omitempty"`
-	VirtualQuantity     int                            `xml:"VirtualQuantity,omitempty"`
-	Weight              int                            `xml:"Weight,omitempty"`
-	CoresPerSocket      int                            `xml:"CoresPerSocket,omitempty"`
-	Connection          []*VirtualHardwareConnection   `xml:"Connection,omitempty"`
-	HostResource        []*VirtualHardwareHostResource `xml:"HostResource,omitempty"`
-	Link                []*Link                        `xml:"Link,omitempty"`
+	XMLName             xml.Name                       `xml:"http://schemas.dmtf.org/ovf/envelope/1 Item"`
+	Address             string                         `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData Address,omitempty"`
+	AddressOnParent     int                            `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData AddressOnParent,omitempty"`
+	AllocationUnits     string                         `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData AllocationUnits,omitempty"`
+	AutomaticAllocation bool                           `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData AutomaticAllocation,omitempty"`
+	Connection          []*VirtualHardwareConnection   `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData Connection,omitempty"`
+	Description         string                         `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData Description,omitempty"`
+	ElementName         string                         `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData ElementName,omitempty"`
+	HostResource        []*VirtualHardwareHostResource `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData HostResource,omitempty"`
+	InstanceID          int                            `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData InstanceID,omitempty"`
+	Link                []*Link                        `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData Link,omitempty"`
+	Reservation         int                            `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData Reservation"`
+	ResourceSubType     string                         `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData ResourceSubType,omitempty"`
+	ResourceType        int                            `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData ResourceType,omitempty"`
+	VirtualQuantity     int                            `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData VirtualQuantity,omitempty"`
+	Weight              int                            `xml:"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData Weight"`
+	CoresPerSocket      int                            `xml:"http://www.vmware.com/schema/ovf CoresPerSocket,omitempty"`
 }
 
 // Connection info from ResourceType=10 (Network Interface)
