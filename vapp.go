@@ -662,6 +662,68 @@ func (v *VApp) AddMetadata(key, value string) (Task, error) {
 
 }
 
+func (v *VApp) SetPermissions(isSharedToEveryone bool, everyoneAccessLevel string, perm []map[string]string) (Task, error) {
+	err := v.Refresh()
+	if err != nil {
+		return Task{}, fmt.Errorf("error refreshing vapp before running customization: %v", err)
+	}
+
+	access_settings := make([]*types.AccessSetting, len(perm))
+
+	for _, value := range perm {
+		temp := &types.AccessSetting{
+			Subject: types.Subject{
+				HREF: value["uri"],
+				Type: value["type"],
+				Name: value["name"],
+			},
+			AccessLevel: value["level"],
+		}
+
+		access_settings = append(access_settings, temp)
+	}
+
+	newmetadata := &types.ControlAccessParams{
+		Xmlns:              "http://www.vmware.com/vcloud/v1.5",
+		IsSharedToEveryone: isSharedToEveryone,
+		AccessSettings: types.AccessSettings{
+			AccessSetting: access_settings,
+		},
+		EveryoneAccessLevel: everyoneAccessLevel,
+	}
+
+	output, err := xml.MarshalIndent(newmetadata, "  ", "    ")
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+	}
+
+	log.Printf("[DEBUG] NetworkXML: %s", output)
+
+	b := bytes.NewBufferString(xml.Header + string(output))
+
+	s, _ := url.ParseRequestURI(v.VApp.HREF)
+	s.Path += "/action/controlAccess"
+
+	req := v.c.NewRequest(map[string]string{}, "POST", *s, b)
+
+	req.Header.Add("Content-Type", "application/vnd.vmware.vcloud.controlaccess+xml")
+
+	resp, err := checkResp(v.c.Http.Do(req))
+	if err != nil {
+		return Task{}, fmt.Errorf("error setting vapp permissions: %s", err)
+	}
+
+	task := NewTask(v.c)
+
+	if err = decodeBody(resp, task.Task); err != nil {
+		return Task{}, fmt.Errorf("error decoding Task response: %s", err)
+	}
+
+	// The request was successful
+	return *task, nil
+
+}
+
 func (v *VApp) SetOvf(parameters map[string]string) (Task, error) {
 	err := v.Refresh()
 	if err != nil {

@@ -1701,3 +1701,28 @@ type QueryResultOrgVdcStorageProfileRecordType struct {
 	StorageUsedMB           int    `xml:"storageUsedMB,attr,omitempty"`
 	StorageLimitMB          int    `xml:"storageLimitMB,attr,omitempty"`
 }
+
+type ControlAccessParams struct {
+	Xmlns               string         `xml:"xmlns,attr,omitempty"`
+	IsSharedToEveryone  bool           `xml:"IsSharedToEveryone"`
+	EveryoneAccessLevel string         `xml:"EveryoneAccessLevel,omitempty"`
+	AccessSettings      AccessSettings `xml:"AccessSettings,omitempty"`
+}
+
+type AccessSettings struct {
+	XMLName       xml.Name         `xml:"AccessSettings"`
+	AccessSetting []*AccessSetting `xml:"AccessSetting,omitempty"`
+}
+
+type AccessSetting struct {
+	XMLName     xml.Name `xml:"AccessSetting"`
+	Subject     Subject  `xml:"Subject,omitempty"`
+	AccessLevel string   `xml:"AccessLevel,omitempty"`
+}
+
+type Subject struct {
+	HREF string `xml:"href,attr,omitempty"`
+	ID   string `xml:"id,attr,omitempty"`
+	Type string `xml:"type,attr,omitempty"`
+	Name string `xml:"name,attr,omitempty"`
+}
